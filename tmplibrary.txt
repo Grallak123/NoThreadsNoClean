@@ -1,0 +1,328 @@
+create database library2;
+
+use library2;
+
+CREATE TABLE Book (
+isbn VARCHAR(13) NOT NULL,
+genre VARCHAR(30) NOT NULL,
+title VARCHAR(60) NOT NULL,
+publisher VARCHAR(60) NOT NULL,
+rating VARCHAR(3) NOT NULL,
+bookcreator VARCHAR(60) NOT NULL,
+CONSTRAINT CHK_category CHECK (genre = 'Crime' OR genre = 'Mystery' OR genre = 'Romance' OR
+genre = 'Drama' OR genre= 'Memoir' OR genre= 'Fantasy' OR genre = 'Learning'),
+CONSTRAINT CHK_rating CHECK (rating>=1 AND rating<=5),
+PRIMARY KEY(isbn));
+
+CREATE TABLE Author (
+authorID int NOT NULL AUTO_INCREMENT,
+authorname VARCHAR(60) NOT NULL,
+authorcreator VARCHAR(60) NOT NULL,
+PRIMARY KEY(authorID));
+
+
+CREATE TABLE Authorof (
+isbn VARCHAR(13) NOT NULL,
+authorID int NOT NULL AUTO_INCREMENT,
+FOREIGN KEY(isbn) REFERENCES Book(isbn) on delete cascade,
+FOREIGN KEY(authorID) REFERENCES Author(authorID)on delete cascade,
+PRIMARY KEY(isbn,authorID));
+
+
+CREATE TABLE User (
+uid int NOT NULL AUTO_INCREMENT,
+username VARCHAR(30) NOT NULL,
+userpassword int(30) NOT NULL,
+useremail VARCHAR(60) NOT NULL,
+realname VARCHAR(60) NOT NULL,
+ranking int(2) NOT NULL,
+PRIMARY KEY(uid));
+
+CREATE TABLE Review (
+isbn VARCHAR(13) NOT NULL,
+uid int NOT NULL,
+review_time DATETIME NOT NULL default CURRENT_TIMESTAMP,
+review_text VARCHAR(999) NOT NULL,
+reviewcreator VARCHAR(60) NOT NULL,
+FOREIGN KEY(isbn) REFERENCES Book(isbn) on delete cascade,
+FOREIGN KEY(uid) REFERENCES User(uid) on delete cascade,
+PRIMARY KEY(isbn,uid,review_time));
+
+
+
+INSERT INTO Book VALUES('9789144131757','Learning','Finansiellregleringochtillsyn','Studentlitteratur','4','jeffrey');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('AnnaKarinStockenstrand','jeffrey');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('RebeccaSoderstrom','grallak');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('PeterOhman','jeffrey');
+
+INSERT INTO Authorof(isbn) VALUES('9789144131757'); 
+
+INSERT INTO Authorof(isbn) VALUES('9789144131757'); 
+
+INSERT INTO Authorof(isbn) VALUES('9789144131757');
+
+INSERT INTO Book VALUES('9789144123707','Learning','Kliniskpsykiatri','Studentlitteratur','2','fegelein');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('ChristerAllgulander','fegelein');
+
+INSERT INTO Authorof(isbn) VALUES('9789144123707'); 
+
+INSERT INTO Book VALUES('9780007581146','Fantasy','LordOfTheRings','Bokus','3','fegelein');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('JRRTolkien','fegelein');
+
+INSERT INTO Authorof(isbn) VALUES('9780007581146');
+
+INSERT INTO Book VALUES('9789144069197','Learning','Databasteknik','Bokus','1','grallak');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('ThomasPadronMccarthy','grallak');
+
+INSERT INTO Author(authorname,authorcreator) VALUES('ToreRisch','grallak');
+
+INSERT INTO Authorof(isbn) VALUES('9789144069197');
+
+INSERT INTO Authorof(isbn) VALUES('9789144069197');
+
+
+Insert into Book values('9780261102736','Fantasy','TheSilmarillion','Bokus','5','grallak');
+
+INSERT INTO Authorof VALUES('9780261102736',5);
+
+
+
+
+
+INSERT INTO User(username,userpassword,useremail,realname,ranking) VALUES('jeffrey',1234,'jeffrey@gmail.com',
+'jeffreydulain',1);
+
+INSERT INTO User(username,userpassword,useremail,realname,ranking) VALUES('fegelein',234,'fegelein@gmail.com',
+'FEGELEINFEGELEINFEGELEIN',1);
+
+INSERT INTO User(username,userpassword,useremail,realname,ranking) VALUES('grallak',246768,'grallak@gmail.com',
+'DaManHimself',2);
+
+INSERT INTO User(username,userpassword,useremail,realname,ranking) VALUES('lurker',321,'lurker@4chan.com',
+'NotARealHuman',0);
+
+
+CREATE VIEW usersview AS
+Select uid,username,ranking
+from user;
+
+
+
+CREATE USER 'jeffrey'@'localhost'
+IDENTIFIED BY '1234';
+GRANT SELECT ON library2.book to 'jeffrey'@'localhost';
+GRANT SELECT ON library2.author to 'jeffrey'@'localhost';
+GRANT SELECT ON library2.authorof to 'jeffrey'@'localhost';
+GRANT SELECT ON library2.review to 'jeffrey'@'localhost';
+GRANT SELECT ON library2.usersview to 'jeffrey'@'localhost';
+
+grant delete on library2.book to 'jeffrey'@'localhost';
+grant insert on library2.book to 'jeffrey'@'localhost';
+grant delete on library2.authorof to 'jeffrey'@'localhost';
+grant insert on library2.authorof to 'jeffrey'@'localhost';
+grant delete on library2.author to 'jeffrey'@'localhost';
+grant insert on library2.author to 'jeffrey'@'localhost';
+grant delete on library2.review to 'jeffrey'@'localhost';
+grant insert on library2.review to 'jeffrey'@'localhost';
+
+
+grant all on library2.* to 'grallak'@'localhost';
+
+CREATE USER 'fegelein'@'localhost'
+IDENTIFIED BY '234';
+GRANT SELECT ON library2.book to 'fegelein'@'localhost';
+GRANT SELECT ON library2.author to 'fegelein'@'localhost';
+GRANT SELECT ON library2.authorof to 'fegelein'@'localhost';
+GRANT SELECT ON library2.review to 'fegelein'@'localhost';
+GRANT SELECT ON library2.usersview to 'fegelein'@'localhost';
+
+grant delete on library2.book to 'fegelein'@'localhost';
+grant insert on library2.book to 'fegelein'@'localhost';
+grant delete on library2.authorof to 'fegelein'@'localhost';
+grant insert on library2.authorof to 'fegelein'@'localhost';
+grant delete on library2.author to 'fegelein'@'localhost';
+grant insert on library2.author to 'fegelein'@'localhost';
+grant delete on library2.review to 'fegelein'@'localhost';
+grant insert on library2.review to 'fegelein'@'localhost';
+
+CREATE USER 'lurker'@'localhost'
+IDENTIFIED BY '321';
+GRANT SELECT ON library2.book to 'lurker'@'localhost';
+GRANT SELECT ON library2.author to 'lurker'@'localhost';
+GRANT SELECT ON library2.authorof to 'lurker'@'localhost';
+GRANT SELECT ON library2.review to 'lurker'@'localhost';
+GRANT SELECT ON library2.usersview to 'lurker'@'localhost';
+
+insert into review(isbn,uid,review_text,reviewcreator) values('9789144069197',3,'I Like this book a lot','grallak');
+
+insert into review(isbn,uid,review_text,reviewcreator) values('9789144131757',2,'Finansiellregleringochtillsyn 
+is a great book','fegelein');
+
+insert into review(isbn,uid,review_text,reviewcreator) values('9789144131757',3,'Finansiell 
+is a book I dont like too much','grallak');
+
+
+
+/***!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!***/
+
+/***Don't use when starting from scratch the following:***/
+
+/***!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!***/
+
+
+
+drop USER 'fegelein'@'localhost';
+
+show grants for 'fegelein'@'localhost';
+
+revoke select on library.book from 'fegelein'@'localhost';
+
+select * from book;
+
+alter table book
+drop CHECK CHK_genre;
+
+alter table book
+add CONSTRAINT CHK_genre CHECK (genre = 'Crime' OR gemre = 'Mystery' OR genre = 'Romance' OR
+genre = 'Drama' OR genre = 'Memoir' OR genre = 'Fantasy' OR genre = 'Learning');
+
+
+
+select book.*,authorname	
+from book
+join authorof on authorof.isbn = book.isbn
+join author on author.authorid = authorof.authorid
+order by isbn DESC;
+
+INSERT INTO Book VALUES('9789182131757','Crime','Crime never sleeps','Adlibris');
+
+Select book.*,authorname,author.creator from book join authorof on authorof.isbn = book.isbn join author on author.authorid = authorof.authorid where book.isbn like '%%' 
+and book.title like '%%' and book.publisher like '%%' and author.authorname like '%%' order by isbn desc;
+
+
+Select book.*,authorname from book join authorof on authorof.isbn = book.isbn join author on author.authorid = authorof.authorid where book.isbn like '%%' 
+and book.title like '%%' and book.publisher like '%%' and author.authorname like '%ar%' order by isbn desc;
+
+select authorof.*,authorname,authorcreator from authorof
+join author on authorof.authorID = author.authorID
+where authorof.isbn ='9789144131757' or authorof.isbn ='9789144069197';
+
+CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+
+CREATE VIEW usersview AS
+Select uid,username,ranking
+from user;
+
+select * from usersview;
+
+
+INSERT INTO Book VALUES('9784805311165','Learning','JapaneseKanjiAndKana','Tuttle');
+
+select * from book;
+
+delete from book where book.isbn = '9784805311165';
+
+select * from book;
+
+9784805311165
+Learning
+JapaneseKanjiAndKana
+Tuttle
+
+
+
+INSERT INTO Author VALUES(10,'PeterOhman');
+
+select author.authorid,author.authorname from author where authorname like '%%';
+
+select authorid from author where authorname like '%%'
+
+
+JRRTolkien
+9780547928227
+
+ThomasPadronMccarthy
+
+
+JRRTolkien,cancer,cod
+
+
+TheSilmarillion
+9780261102736
+ChristopherTolkien,JRRTolkien
+Bokus
+
+
+INSERT INTO Book VALUES('9780547928227','Fantasy','TheHobbit','Bokus');
+
+INSERT INTO Authorof VALUES('9780547928227',5);
+
+INSERT INTO Authorof VALUES('9780547928227',7);
+
+select uid,ranking from usersview where username = 'Stardust';
+
+
+CREATE TABLE Review (
+isbn VARCHAR(13) NOT NULL,
+uid int NOT NULL,
+review_time DATETIME NOT NULL default CURRENT_TIMESTAMP,
+review_text VARCHAR(999) NOT NULL,
+FOREIGN KEY(isbn) REFERENCES Book(isbn),
+FOREIGN KEY(uid) REFERENCES User(uid),
+PRIMARY KEY(isbn,uid,review_time));
+
+insert into review(isbn,uid,review_text) values('9789144069197',1,'I Like this book a lot');
+
+// use this to check if there is already a review with this guy's name on it when trying to make a review of this book with
+// that users name
+select isbn,creator from review where isbn = '9789144069197' and creator = 'jeffrey';
+
+
+Select book.*,authorname,authorcreator from book join authorof on authorof.isbn = book.isbn join author on author.authorid = authorof.authorid where book.isbn like '%%' 
+and book.title like '%%' and book.publisher like '%%' and author.authorname like '%%' order by isbn desc;
+
+(1)
+9789144069197
+
+(2)
+9789144131757
+
+select * from review where isbn = 9789144131757;
+
+select book.*, count(loan.copynr) AS "Loansbycopies"
+from book
+inner join copy on book.isbn = copy.isbn
+inner join loan on copy.copynr = loan.copynr
+group by loan.copynr
+order by loansbycopies DESC
+rank() over(order by(loansbycopies) desc)as "loansrank" 
+limit 10;
+
+9789144123707
+
+delete from review where isbn = '9789144131757' and uid = 2;
+
+
+Select author.*,book.isbn from author join authorof on authorof.authorid = author.authorid join book on authorof.isbn = book.isbn where book.isbn like '%%';
+
+Select author.*,book.isbn from author join authorof on authorof.authorid = author.authorid join book on authorof.isbn = book.isbn where book.isbn = '9789144131757';
+
+Select book.*,authorname,authorcreator,author.authorid from book join authorof on authorof.isbn = book.isbn join author on author.authorid = authorof.authorid where book.isbn like '%%' 
+and book.title like '%%' and book.publisher like '%%' and author.authorname like '%%' order by isbn desc;
+
+
+select authorof.*,authorname,authorcreator from authorof
+join author on authorof.authorID = author.authorID where authorof.isbn = '9789144131757'
+order by ISBN DESC;
+
+9789144131757
+        
